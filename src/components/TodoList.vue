@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul>
+        <transition-group name="list" tag="ul">
             <li v-for="(todoItem, index) in propsdata" v-bind:key="todoItem.item" class="shadow">
                 <i class="checkBtn fa fa-check" v-bind:class="{checkBtnCompleted: todoItem.completed}" 
                 v-on:click="toggleComplete(todoItem, index)" aria-hidden="true"></i>
@@ -10,7 +10,7 @@
                     <i class="fas fa-trash" aria-hidden="true"></i>
                 </span>
             </li>
-        </ul>
+        </transition-group>
     </div>
 </template>
 
@@ -19,14 +19,11 @@ export default{
     props: ['propsdata'],
     methods:{
         removeTodo: function(todoItem, index){
-            console.log(todoItem, index);
-            localStorage.removeItem(todoItem);
-            this.todoItems.splice(index,1);
+           this.$emit('removeItem', todoItem, index);
+           
         },
         toggleComplete: function(todoItem, index){
-            todoItem.completed = !todoItem.completed;
-            localStorage.removeItem(todoItem.item);
-            localStorage.setItem(todoItem.item, JSON.stringify(todoItem));
+           this.$emit('toggleItem', todoItem, index);
         }
     }
 }
@@ -64,6 +61,13 @@ export default{
     .textCompleted {
         text-decoration: line-through;
         color: #b3adad;
+    }
+    .list-enter-active, .list-leave-active {
+        transition: all 1s;
+    }
+    .list-enter,.list-leave-to {
+        opacity: 0;
+        transform: translateY(30px);
     }
     
 
